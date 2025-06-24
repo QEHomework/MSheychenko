@@ -29,6 +29,8 @@ def send_metrics():
             generate_metric("app_requests_total", random.randint(100, 200), {"env": "dev"}),
             generate_metric("app_requests_successful", random.randint(80, 100), {"env": "dev"}),
             generate_metric("app_requests_failed", random.randint(0, 20), {"env": "dev"}),
+максимальное значение типа инт в джава 
+типо шоб лимита не было 
             generate_metric("app_rate_limit", 2_147_483_647, {"env": "dev"}),
             generate_metric("app_error_rate", random.uniform(0, 10), {"env": "dev"}),
         ]

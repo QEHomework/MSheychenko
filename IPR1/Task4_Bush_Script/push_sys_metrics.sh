@@ -24,6 +24,8 @@ get_linux() {
   mem_used=$((mem_total-mem_free))
 
   # Disk (/)
+  # 3 - использвано памяти 
+  # 4 - свободно 
   read -r du df < <(df -P / | awk 'NR==2{print $3" "$4}')
   DISK_USED=$((du*1024))
   DISK_FREE=$((df*1024))
@@ -36,9 +38,12 @@ get_darwin() {
         awk '{sum+=$1} END {printf "%.2f", sum}')
 
   # Memory
+# вывод без названия колонок и тд тока значения 
   mem_total=$(sysctl -n hw.memsize)
   page_size=$(vm_stat | head -1 | awk '{print $8}')
   used_pages=$(vm_stat | awk '
+# Отрабатывает тоолько когда видит моотв строку 
+# потому что vm_stat парсит построчно 
       /Pages active/      {a=$3}
       /Pages wired/       {w=$3}
       /Pages speculative/ {s=$3}
@@ -63,6 +68,7 @@ collect() {
 # ───────── main loop ──────────────────────────────────────────
 while true; do
   collect
+#прочитать тело запроса из стандартного потока ввода 
   cat <<EOF | curl -s --data-binary @- "$PGW_URL"
 # TYPE system_cpu_usage_percent gauge
 system_cpu_usage_percent $CPU
