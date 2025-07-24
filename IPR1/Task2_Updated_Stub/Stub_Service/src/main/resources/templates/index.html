@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Placeholder</title>
+</head>
+<body>
+<h1>API Placeholder</h1>
+
+<h2>Current Settings</h2>
+<p>Delay: <span th:text="${delay}">[delay]</span> ms</p>
+<p>Rate Limit: <span th:text="${rateLimit}">[rateLimit]</span></p>
+<p>Error Rate: <span th:text="${errorRate}">[errorRate]</span>%</p>
+<p>Success Rate: <span th:text="${successRate}">[successRate]</span>%</p>
+
+<h2>Update Settings</h2>
+<form action="/settings" method="post">
+    <label for="delay">Delay (ms):</label>
+    <input type="number" name="delay" id="delay" value="0">
+    <br>
+    <label for="rateLimit">Rate Limit:</label>
+    <input type="number" name="rateLimit" id="rateLimit" value="1000">
+    <br>
+    <label for="errorRate">Error Rate (%):</label>
+    <input type="number" name="errorRate" id="errorRate" value="0">
+    <br>
+    <button type="submit">Save Settings</button>
+</form>
+
+<h2>Send JSON</h2>
+<form action="/api/json" method="post">
+    <textarea name="json" rows="5" cols="30">{ "name": "example" }</textarea>
+    <br>
+    <button type="submit">Send</button>
+</form>
+
+<h2>Response</h2>
+<pre th:if="${response != null}" th:text="${response}">No response yet</pre>
+<p th:if="${errorMessage != null}" th:text="'Error: ' + ${errorMessage}">No errors</p>
+</body>
+</html>
