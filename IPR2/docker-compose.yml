@@ -1,0 +1,67 @@
+version: '3.7'
+
+services:
+
+  webtours:
+    image: webtours-app
+    ports:
+      - "8095:80"
+    container_name: webtours
+    restart: unless-stopped
+    labels:
+      - com.docker.compose.service=webtours
+
+  influxdb:
+    image: influxdb:1.8
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=jmeter
+      - INFLUXDB_HTTP_AUTH_ENABLED=false
+    restart: unless-stopped
+    labels:
+      - com.docker.compose.service=influxdb
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - /var/run/docker.sock:/var/run/docker.sock:ro  
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    restart: unless-stopped
+    labels:
+      - com.docker.compose.service=prometheus
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro   
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+    command:
+      - "--logtostderr"
+      - "--housekeeping_interval=10s"
+      - "--store_container_labels=true"               
+      # - "--docker_only=true"                         
+    restart: unless-stopped
+    labels:
+      - com.docker.compose.service=cadvisor
+
+  mock-payment:
+    build: ./mock-payment
+    ports:
+      - "1337:1337"
+    environment:
+      - ERROR_PROB=0.01
+      - PORT=1337
+    restart: unless-stopped
+    labels:
+      - com.docker.compose.service=mock-payment
